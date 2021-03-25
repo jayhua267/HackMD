@@ -1,6 +1,6 @@
 # Verilog code testing procedure
 ###### tags: `CAID` `Synthesis`
-
+:::info
 ## Presim
 * Go to the location where place `TPA.v` and `testbench.v`  
     * ![](https://i.imgur.com/Ras0RA6.png)
@@ -21,10 +21,12 @@ TPA.v
     *    ![](https://i.imgur.com/2iwwo4N.png)
     *    **`ncverilog -f simulate.f`**
    
-
+:::
+:::success
 ### Result: 
 ![](https://i.imgur.com/XqfyYWJ.png)
-
+:::
+:::info
 ## Postsim (note: make sure search_path is correct)
 
 *    **Design compiler** : preparing those files
@@ -133,7 +135,10 @@ TPA.v
     *    **`menu`** then **`3`** 
     *    ![](https://i.imgur.com/2iwwo4N.png)
     *    **`ncverilog -f post.f`**
+:::
 
+
+:::danger
 ### Error when running `ncverilog -f postsim.f`
 *    Remember to change file name into **`.synopsys_dc.setup`** 
 *    Maybe the clock period too short in **`*.sdc`** and **`*_tb.v`**. We can increase the cycle period 
@@ -141,8 +146,11 @@ TPA.v
         ![](https://i.imgur.com/rnhd485.png)
         *    ***_tb.v** ![](https://i.imgur.com/Mo9xsar.png)
 
-
+:::
+:::info
 *    After synthesis, using `report_timing` and `report_constraint` to watch some infomation
-
+:::
+:::success
 * Result: 
 ![](https://i.imgur.com/ggPzl4g.png)
+:::
