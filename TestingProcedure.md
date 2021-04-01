@@ -1,4 +1,4 @@
-# Verilog code testing procedure
+# Verilog code testing procedure (Graduate)
 ###### tags: `CAID` `Synthesis`
 :::info
 ## Presim
