@@ -1,4 +1,8 @@
 # Verilog code testing procedure (Graduate)
+**Git:** https://github.com/jayhua267/HackMD/blob/Graduate/TestingProcedure.md
+
+**HackMD:**
+https://hackmd.io/Tt053rm0RDenzGcEb27rpg
 ###### tags: `CAID` `Synthesis`
 :::info
 ## Presim
