@@ -1,5 +1,8 @@
 # Verilog code testing procedure (Undergraduate)
-https://github.com/jayhua267/HackMD/blob/Undergraduate/TestingProcedure.md
+**Git:** https://github.com/jayhua267/HackMD/blob/Undergraduate/TestingProcedure.md
+
+**HackMD:**
+https://hackmd.io/rtQbTmVHTw-hsz3W-PXBRA
 ###### tags: `CAID` `Synthesis`
 :::info
 ## Presim
