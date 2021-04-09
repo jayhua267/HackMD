@@ -4,6 +4,7 @@
 **HackMD:**
 https://hackmd.io/Tt053rm0RDenzGcEb27rpg
 ###### tags: `CAID` `Synthesis`
+## Preliminary
 :::info
 ## Presim
 * Go to the location where place `TPA.v` and `testbench.v`  
@@ -158,3 +159,114 @@ TPA.v
 * Result: 
 ![](https://i.imgur.com/ggPzl4g.png)
 :::
+
+---
+## FINAL
+:::info
+## 2019 IC Design Contest Cell-Based IC Design Category for Graduate Level
+###  Prework
+*    modifying `testfixture.v` from 
+```define SDFFILE     "./IOTDF_syn.sdf"```
+into
+```
+`ifdef SYN
+`define SDFFILE     "./IOTDF_syn.sdf"     //Modify your sdf file name
+`elsif PR
+`define SDFFILE     "./IOTDF_pr.sdf"     //Modify your sdf file name
+`endif
+```
+###  Presim (RTL level)
+*    modifying `runall_rtl`:
+```
+ncverilog testfixture.v IOTDF.v +access+r -clean +define+F1 +nc64bit
+ncverilog testfixture.v IOTDF.v +access+r -clean +define+F2 +nc64bit
+ncverilog testfixture.v IOTDF.v +access+r -clean +define+F3 +nc64bit
+ncverilog testfixture.v IOTDF.v +access+r -clean +define+F4 +nc64bit
+ncverilog testfixture.v IOTDF.v +access+r -clean +define+F5 +nc64bit
+ncverilog testfixture.v IOTDF.v +access+r -clean +define+F6 +nc64bit
+ncverilog testfixture.v IOTDF.v +access+r -clean +define+F7 +nc64bit
+```
+*    Executing that file `sh runall_rtl`
+*    ==Result after each test==
+
+![](https://i.imgur.com/PPVFoJg.png)
+### Postsim (Synthesis and Gate level)
+#### Synthesis (similar to Synthesis step in Preliminary)
+#### Gate level(Postsim)
+*    modifying `runall_syn`:
+```
+ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +define+SDF+F1+SYN
+ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +define+SDF+F2+SYN
+ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +define+SDF+F3+SYN
+ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +define+SDF+F4+SYN
+ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +define+SDF+F5+SYN
+ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +define+SDF+F6+SYN
+ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +define+SDF+F7+SYN
+
+```
+*    Executing that file `sh runall_syn`
+*    ==Result after each test==
+![](https://i.imgur.com/CLauvjl.png)
+
+#### Place and Route 
+*    After using tools(such as Innovus,...), we will have 5 files:
+        *    `IOTDF.io`
+        *    `IOTDF_pr.gds`
+        *    `IOTDF_pr.sdf`
+        *    `IOTDF_pr.spef`
+        *    `IOTDF_pr.v`
+
+*    modifying `runall_pr`:
+```
+ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +access+r -clean +define+SDF+F1+PR
+ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +access+r -clean +define+SDF+F2+PR
+ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +access+r -clean +define+SDF+F3+PR
+ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +access+r -clean +define+SDF+F4+PR
+ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +access+r -clean +define+SDF+F5+PR
+ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +access+r -clean +define+SDF+F6+PR
+ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +access+r -clean +define+SDF+F7+PR
+
+```
+*    Executing that file `sh runall_pr`
+*    ==Result after each test==
+![](https://i.imgur.com/Ct3ymjT.png)
+
+#### Primetime
+*    
+*    Executing instruction `pt_shell -f pt_sctipt.tcl`
+*    ==Result after each test==
+![](https://i.imgur.com/FDm4ZSW.png)
+
+:::
+
+---
+:::info
+### Makefile Version
+*    RTL level
+        *    `make rtl tb=1` 
+        *    `make rtl tb=2`
+        *    `make rtl tb=3`
+        *    `make rtl tb=4`
+        *    `make rtl tb=5`
+        *    `make rtl tb=6`
+        *    `make rtl tb=7`
+*    Synthesis `make synthesize`
+*    Gate level
+        *    `make gate tb=1`
+        *    `make gate tb=2`
+        *    `make gate tb=3`
+        *    `make gate tb=4`
+        *    `make gate tb=5`
+        *    `make gate tb=6`
+        *    `make gate tb=7`
+*    Place and Route
+        *    `make pr tb=1`
+        *    `make pr tb=2`
+        *    `make pr tb=3`
+        *    `make pr tb=4`
+        *    `make pr tb=5`
+        *    `make pr tb=6`
+        *    `make pr tb=7`
+*    primetime `make pt_time`
+:::
+
