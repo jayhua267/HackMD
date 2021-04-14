@@ -1,14 +1,18 @@
-# Verilog code testing procedure (Graduate)
+# Tutorial for Graduate-Level IC Contest
 **Git:** https://github.com/jayhua267/HackMD/blob/Graduate/TestingProcedure.md
 
 **HackMD:**
 https://hackmd.io/Tt053rm0RDenzGcEb27rpg
 ###### tags: `CAID` `Synthesis`
-## Preliminary
-:::info
+# Preliminary Contest
+
+## Prework
+`cd grad_prelim/ICC_2018/2018_TPA`
+
 ## Presim
 * Go to the location where place `TPA.v` and `testbench.v`  
-    * ![](https://i.imgur.com/Ras0RA6.png)
+
+![](https://i.imgur.com/Ras0RA6.png)
 
 * Make a new `.f` file using instruction `vim simulate.f`
 * In `.f` file write:
@@ -26,61 +30,63 @@ TPA.v
     *    ![](https://i.imgur.com/2iwwo4N.png)
     *    **`ncverilog -f simulate.f`**
    
-:::
-:::success
+
 ### Result: 
 ![](https://i.imgur.com/XqfyYWJ.png)
-:::
-:::info
+
 ## Postsim (note: make sure search_path is correct)
 
-*    **Design compiler** : preparing those files
-        1. synopsys_dc.setup (Remember to change the Library's path)
+*    **Design compiler** : preparation before synthesis
+        1. **Set up file**: `synopsys_dc.setup` (Remember to change the search path)
+        
+        ![](https://i.imgur.com/7YUzVJA.png)
         ```
-            set company "CIC"
-            set designer "Student"
-            set search_path      "/home/nfs_cad/lib/CBDK_IC_Contest_v2.1/SynopsysDC/db/  ../sram_512x16/ $search_path"
-            set target_library   "slow.db"
-            set link_library     "* $target_library dw_foundation.sldb"
-            set symbol_library   "generic.sdb"
-            set synthetic_library "dw_foundation.sldb"
+        set company "CIC"
+        set designer "Student"
+        ******************* !!!! Change here !!!!***********************
+        set search_path      "/home/nfs_cad/lib/CBDK_IC_Contest_v2.1/SynopsysDC/db/  ../sram_512x16/ $search_path"
+        **********************************************************
+        set target_library   "slow.db"
+        set link_library     "* $target_library dw_foundation.sldb"
+        set symbol_library   "generic.sdb"
+        set synthetic_library "dw_foundation.sldb"
 
-            set hdlin_translate_off_skip_text "TRUE"
-            set edifout_netlist_only "TRUE"
-            set verilogout_no_tri true
+        set hdlin_translate_off_skip_text "TRUE"
+        set edifout_netlist_only "TRUE"
+        set verilogout_no_tri true
 
-            set hdlin_enable_presto_for_vhdl "TRUE"
-            set sh_enable_line_editing true
-            set sh_line_editing_mode emacs
-            history keep 100
-            alias h history
+        set hdlin_enable_presto_for_vhdl "TRUE"
+        set sh_enable_line_editing true
+        set sh_line_editing_mode emacs
+        history keep 100
+        alias h history
 
-            set bus_inference_style {%s[%d]}
-            set bus_naming_style {%s[%d]}
-            set hdlout_internal_busses true
-            define_name_rules name_rule -allowed {a-z A-Z 0-9 _} -max_length 255 -type cell
-            define_name_rules name_rule -allowed {a-z A-Z 0-9 _[]} -max_length 255 -type net
-            define_name_rules name_rule -map {{"\\*cell\\*" "cell"}}
+        set bus_inference_style {%s[%d]}
+        set bus_naming_style {%s[%d]}
+        set hdlout_internal_busses true
+        define_name_rules name_rule -allowed {a-z A-Z 0-9 _} -max_length 255 -type cell
+        define_name_rules name_rule -allowed {a-z A-Z 0-9 _[]} -max_length 255 -type net
+        define_name_rules name_rule -map {{"\\*cell\\*" "cell"}}
         ```
 
-        2. TPA.sdc(constraint file)
+        2. **Constraint File**: `TPA.sdc`
         ```
-            set cycle  10.0        ;#clock period defined by designer
-            create_clock -period $cycle [get_ports  clk]
-            set_dont_touch_network      [get_clocks clk]
-            set_clock_uncertainty  0.1  [get_clocks clk]
-            set_clock_latency      0.5  [get_clocks clk]
-            set_input_delay  5      -clock clk [remove_from_collection [all_inputs] [get_ports clk]]
-            set_output_delay 0.5    -clock clk [all_outputs] 
-            set_load         0.1     [all_outputs]
-            set_drive        1     [all_inputs]
-            set_operating_conditions  -max slow  
-            set_wire_load_model -name tsmc13_wl10 -library slow               
-            set_max_fanout 20 [all_inputs]
+        set cycle  10.0        ;#clock period defined by designer
+        create_clock -period $cycle [get_ports  clk]
+        set_dont_touch_network      [get_clocks clk]
+        set_clock_uncertainty  0.1  [get_clocks clk]
+        set_clock_latency      0.5  [get_clocks clk]
+        set_input_delay  5      -clock clk [remove_from_collection [all_inputs] [get_ports clk]]
+        set_output_delay 0.5    -clock clk [all_outputs] 
+        set_load         0.1     [all_outputs]
+        set_drive        1     [all_inputs]
+        set_operating_conditions  -max slow  
+        set_wire_load_model -name tsmc13_wl10 -library slow               
+        set_max_fanout 20 [all_inputs]
         ```
-        3. dc_syn.tcl(synthesis script)
+        3. **Synthesis Script**: `dc_syn.tcl`
         ```
-            #Read All Files
+        #Read All Files
         set TOP TPA 
         read_file -format verilog  ${TOP}.v
         current_design ${TOP}
@@ -140,33 +146,37 @@ TPA.v
     *    **`menu`** then **`3`** 
     *    ![](https://i.imgur.com/2iwwo4N.png)
     *    **`ncverilog -f post.f`**
-:::
 
 
-:::danger
+
 ### Error when running `ncverilog -f postsim.f`
 *    Remember to change file name into **`.synopsys_dc.setup`** 
 *    Maybe the clock period too short in **`*.sdc`** and **`*_tb.v`**. We can increase the cycle period 
         *    ***.sdc** 
+        
         ![](https://i.imgur.com/rnhd485.png)
-        *    ***_tb.v** ![](https://i.imgur.com/Mo9xsar.png)
+        *    ***_tb.v** 
+        
+        ![](https://i.imgur.com/Mo9xsar.png)
 
-:::
-:::info
-*    After synthesis, using `report_timing` and `report_constraint` to watch some infomation
-:::
-:::success
-* Result: 
+After synthesis, using `report_timing` and `report_constraint` to watch some infomation
+
+
+Result: 
+
 ![](https://i.imgur.com/ggPzl4g.png)
-:::
+
 
 ---
 ## FINAL
-:::info
+
 ## 2019 IC Design Contest Cell-Based IC Design Category for Graduate Level
 ###  Prework
-*    modifying `testfixture.v` from 
-```define SDFFILE     "./IOTDF_syn.sdf"```
+*    `cd grad_final/ICC_2019/icc2019cb/`
+*    In `testfixture.v` file, change 
+```
+define SDFFILE     "./IOTDF_syn.sdf"
+```
 into
 ```
 `ifdef SYN
@@ -176,7 +186,7 @@ into
 `endif
 ```
 ###  Presim (RTL level)
-*    modifying `runall_rtl`:
+*    In `runall_rtl` file, add `+nc64bit` at the end of each line:
 ```
 ncverilog testfixture.v IOTDF.v +access+r -clean +define+F1 +nc64bit
 ncverilog testfixture.v IOTDF.v +access+r -clean +define+F2 +nc64bit
@@ -186,14 +196,16 @@ ncverilog testfixture.v IOTDF.v +access+r -clean +define+F5 +nc64bit
 ncverilog testfixture.v IOTDF.v +access+r -clean +define+F6 +nc64bit
 ncverilog testfixture.v IOTDF.v +access+r -clean +define+F7 +nc64bit
 ```
-*    Executing that file `sh runall_rtl`
-*    ==Result after each test==
+Executing that file 
+*    **`sh runall_rtl`**
+
+==Result after each test==
 
 ![](https://i.imgur.com/PPVFoJg.png)
 ### Postsim (Synthesis and Gate level)
-#### Synthesis (similar to Synthesis step in Preliminary)
+#### Synthesis (Refer to Synthesis step in Preliminary)
 #### Gate level(Postsim)
-*    modifying `runall_syn`:
+*    In `runall_syn` file, add `+nc64bit +SYN` at each line:
 ```
 ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +define+SDF+F1+SYN
 ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +define+SDF+F2+SYN
@@ -204,19 +216,21 @@ ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +d
 ncverilog testfixture.v IOTDF_syn.v -v tsmc13_neg.v +access+r +nc64bit -clean +define+SDF+F7+SYN
 
 ```
-*    Executing that file `sh runall_syn`
-*    ==Result after each test==
+Executing that file 
+*    `sh runall_syn`
+
+==Result after each test==
 ![](https://i.imgur.com/CLauvjl.png)
 
-#### Place and Route 
-*    After using tools(such as Innovus,...), we will have 5 files:
-        *    `IOTDF.io`
-        *    `IOTDF_pr.gds`
-        *    `IOTDF_pr.sdf`
-        *    `IOTDF_pr.spef`
-        *    `IOTDF_pr.v`
-
-*    modifying `runall_pr`:
+### Place and Route 
+* Before P&R, you need to prepare the following files using Cadence Innovus
+    *    `IOTDF.io`
+    *    `IOTDF_pr.gds`
+    *    `IOTDF_pr.sdf`
+    *    `IOTDF_pr.spef`
+    *    `IOTDF_pr.v`
+* Put these files into your directory
+* In `runall_pr` file, add `+nc64bit +PR` at each line:
 ```
 ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +access+r -clean +define+SDF+F1+PR
 ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +access+r -clean +define+SDF+F2+PR
@@ -227,20 +241,100 @@ ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +acce
 ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +access+r -clean +define+SDF+F7+PR
 
 ```
-*    Executing that file `sh runall_pr`
-*    ==Result after each test==
+Executing that file 
+*    `sh runall_pr`
+
+==Result after each test==
 ![](https://i.imgur.com/Ct3ymjT.png)
 
-#### Primetime
-*    
-*    Executing instruction `pt_shell -f pt_sctipt.tcl`
-*    ==Result after each test==
+### Primetime
+#### Prework
+Preparation before executing primetime
+*    `pt_script.tcl`
+```
+#PrimeTime Script
+set power_enable_analysis TRUE
+set power_analysis_mode time_based
+
+read_file -format verilog  ./IOTDF_pr.v
+current_design IOTDF
+link
+
+source ./IOTDF_APR.sdc
+read_parasitics -format SPEF -verbose  ./IOTDF_pr.spef
+
+
+## Measure  power
+#report_switching_activity -list_not_annotated -show_pin
+
+read_vcd  -strip_path test/u_IOTDF  ./IOTDF_F1.fsdb
+update_power
+report_power 
+report_power > F1_7.power
+
+read_vcd  -strip_path test/u_IOTDF  ./IOTDF_F2.fsdb
+update_power
+report_power
+report_power >> F1_7.power
+
+read_vcd  -strip_path test/u_IOTDF  ./IOTDF_F3.fsdb
+update_power
+report_power
+report_power >> F1_7.power
+
+read_vcd  -strip_path test/u_IOTDF  ./IOTDF_F4.fsdb
+update_power
+report_power
+report_power >> F1_7.power
+
+read_vcd  -strip_path test/u_IOTDF  ./IOTDF_F5.fsdb
+update_power
+report_power
+report_power >> F1_7.power
+
+read_vcd  -strip_path test/u_IOTDF  ./IOTDF_F6.fsdb
+update_power
+report_power
+report_power >> F1_7.power
+
+read_vcd  -strip_path test/u_IOTDF  ./IOTDF_F7.fsdb
+update_power
+report_power
+report_power >> F1_7.power
+
+```
+*    `.synopsys_pt.setup`
+```
+set company "CIC"
+set designer "Student"
+set search_path       "./  /usr/cad/lib/CBDK_IC_Contest_v2.1/SynopsysDC/db/  $search_path"
+set target_library    "slow.db                    \
+                      "
+set link_library      "* $target_library"
+
+set hdlin_translate_off_skip_text "TRUE"
+set edifout_netlist_only "TRUE"
+set verilogout_no_tri true
+
+set hdlin_enable_presto_for_vhdl "TRUE"
+set sh_enable_line_editing true
+set sh_line_editing_mode emacs
+history keep 100
+alias h history
+
+
+```
+#### Executing
+Executing instruction 
+*    `pt_shell -f pt_sctipt.tcl`
+
+==Result after each test==
 ![](https://i.imgur.com/FDm4ZSW.png)
 
-:::
+
 
 ---
-:::info
+
 ### Makefile Version
 *    RTL level
         *    `make rtl tb=1` 
@@ -268,5 +362,5 @@ ncverilog  +ncmaxdelays  testfixture.v IOTDF_pr.v -v tsmc13_neg.v +nc64bit +acce
         *    `make pr tb=6`
         *    `make pr tb=7`
 *    primetime `make pt_time`
-:::
+
 
